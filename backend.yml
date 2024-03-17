@@ -38,7 +38,7 @@
         path: /app
         state: latest
 
-    - name: Copy Backend service file
+    - name: Copy Backend Service file
       ansible.builtin.copy:
         src: backend.service
         dest: /etc/systemd/system/backend.service
