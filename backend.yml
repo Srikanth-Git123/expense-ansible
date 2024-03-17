@@ -39,7 +39,7 @@
         state: latest
 
     - name: Copy Backend service file
-      ansible.builtin.copu:
+      ansible.builtin.copy:
         src: backend.service
         dest: /etc/systemd/system/backend.service
 
