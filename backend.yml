@@ -1,0 +1,65 @@
+- name: Backend Setup
+  hosts: all
+  become: yes
+  tasks:
+    - name: Disable default NodeJs Version Module
+      ansible.builtin.shell: dnf module disable nodejs -y
+
+    - name: Enable NodeJS module for v20
+      ansibile.builtin.shell: dnf module enable nodejs -y
+
+    - name: Install NodeJs
+      ansibile.builtin.dnf:
+        name: nodejs
+        state: installed
+
+    - name: Adding Application User
+      ansibile.builtin.user:
+        name: expense
+
+    - name: Clean the old Content
+      ansibile.builtin.file:
+        path: /app
+        state: absent
+
+    - name: Create app Directory
+      ansibile.builtin.file:
+        path: /app
+        state: directory
+
+    - name: Download and Extract app Content
+      ansibile.builtin.unarchive:
+        src: https://expense-artifacts.s3.amazonaws.com/expense-backend-v2.zip
+        dest: /app
+        remote_src: yes
+
+    - name: Download NodeJs Dependencies
+      community.general.npm:
+        path: /app
+        state: latest
+
+    - name: Copy Backend service file
+      ansibile.builtin.copu:
+        src: backend.service
+        dest: /etc/systemd/system/backend.service
+
+    - name: Install MySQL Client
+      ansibile.builtin.dnf:
+        name: mysql
+        state: installed
+
+    - name: Load Schema
+      community.mysql.mysql_db:
+        state: import
+        name: all
+        target: /app/schema/backend.sql
+        login_user: root
+        login_password: ExpenseApp@1
+        login_host: mysql-dev.psrikanth.online
+
+    - name: Start backend Service
+      ansibile.builtin.systemd_service:
+        name: backend
+        state: restarted
+        enabled: yes
+        daemon_reload: yes
