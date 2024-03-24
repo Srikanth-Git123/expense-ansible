@@ -16,7 +16,7 @@
       - cryptography
     executable: pip3.9
 
-- name: Checj the DB connection with our password
+- name: Check the DB connection with our password
   community.mysql.mysql_info:
     login_user: root
     login_password: ExpenseApp@1
