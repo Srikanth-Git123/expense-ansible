@@ -23,6 +23,7 @@
     login_host: mysql-dev.psrikanth.online
     filter: version
   register: mysql_connection_output
+  ignore_errors: yes
 
 - name: print
   debug:
